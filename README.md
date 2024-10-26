@@ -1,2 +1,2 @@
 # ConfigParser
-Simple Config ini-like parser written in c++
+Simple modern c++17 ini-like config parser written in c++
