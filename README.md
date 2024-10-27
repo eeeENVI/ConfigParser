@@ -24,7 +24,7 @@ resolution_height=1080
 resolution_width=1920
 fullscreen=true
 frameRateLimit=75
-verticalSync=false
+volume=0.5
 */
 
 int main()
@@ -40,7 +40,7 @@ int main()
     std::cout << parser.getValue<int>("resolution_height") << "\n";
     std::cout << parser.getValue<int>("frameRateLimit") << "\n";
     std::cout << parser.getValue<bool>("fullscreen") << "\n";
-    std::cout << parser.getValue<bool>("verticalSync") << "\n";
+    std::cout << parser.getValue<float>("volume") << "\n";
 
     try {
         std::cout << parser.getValue<bool>("non_existent_key") << "\n"; // <-- this one will throw error
