@@ -8,13 +8,13 @@ Simple single header ini-like config parser & generator written in modern c++17.
 * Easy to read
 * Allow comments starting with '#'
 * Predictible
-* Catches errors in config file
+* Throws/Catches errors 
 * Easy to modify and expand type parsing
   
 ## Example
 
 ```cpp
-#include "ConfigParser.h"
+#include "..\configParser.h"
 #include <iostream>
 
 /*
@@ -29,21 +29,25 @@ verticalSync=false
 
 int main()
 {
-  ConfigParser parser;
+    ConfigParser parser;
 
-  std::string path = "example.conf"
+    std::string path = "example.conf";
 
-  parser.loadFromFile(path);
+    parser.loadFromFile(path);
 
-  std::cout << parser.getValue<std::string>("title") << "\n";
-  std::cout << parser.getValue<int>("resolution_width") << "\n";
-  std::cout << parser.getValue<int>("resolution_height") << "\n";
-  std::cout << parser.getValue<int>("frameRateLimit") << "\n";
-  std::cout << parser.getValue<bool>("fullscreen") << "\n";
-  std::cout << parser.getValue<bool>("verticalSync") << "\n";
+    std::cout << parser.getValue<std::string>("title") << "\n";
+    std::cout << parser.getValue<int>("resolution_width") << "\n";
+    std::cout << parser.getValue<int>("resolution_height") << "\n";
+    std::cout << parser.getValue<int>("frameRateLimit") << "\n";
+    std::cout << parser.getValue<bool>("fullscreen") << "\n";
+    std::cout << parser.getValue<bool>("verticalSync") << "\n";
 
-  std::cout <<= parser.getValue<bool>("non_existent_key") << "\n"; // <-- this one will catch error
+    try {
+        std::cout << parser.getValue<bool>("non_existent_key") << "\n"; // <-- this one will throw error
+    } catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << "\n";
+    } // When working with external data always nice to use try & catch block
 
-  return 0;
+    return 0;
 }
 ```
