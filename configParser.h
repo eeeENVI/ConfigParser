@@ -6,7 +6,7 @@
 /*
     supported features:
         single header file
-        type-safe getting & setting values
+        type-safe setting values
         # comments are ignored by parser
         key=value dictionary style
         check for valid key names with accordance to cpp variables
@@ -20,9 +20,7 @@
 */
 
 #include <fstream>
-#include <string>
 #include <unordered_map>
-#include <stdexcept>
 #include <algorithm>
 #include <variant>
 #include <vector>
@@ -32,44 +30,42 @@ class ConfigParser
 {
 private:
     // Modern aliases
-    using ConfigValue = std::variant<std::string, int, float, bool>;
+    using ConfigValue = std::variant<std::string, unsigned int, int, float, bool>; // remember to add support to parseValue & saveToFile
     using ConfigMap = std::unordered_map<std::string, ConfigValue>;
 
     ConfigMap configMap;
 
-    std::string trim(const std::string& str);
-    bool isKeyValid(const std::string& key) const;
-    ConfigValue parseValue(const std::string& value);
+    inline std::string trim(const std::string& str);
+    inline bool isKeyValid(const std::string& key) const;
+    inline ConfigValue parseValue(const std::string& value);
 public:
-    ConfigParser();
-    ~ConfigParser();
+    inline ConfigParser() = default;
+    inline ~ConfigParser() = default;
 
-    void loadFromFile(const std::string& filename);
-    void saveToFile(const std::string& filename) const;
+    inline void loadFromFile(const std::string& filename);
+    inline void saveToFile(const std::string& filename) const;
 
-    void clear(); // Clears all entries
-    void clearKeys(const std::vector<std::string>& keys); // Select keys to clear
+    inline void clear(); // Clears all entries
+    inline void clearKeys(const std::vector<std::string>& keys); // Select keys to clear
+
+    inline std::vector<std::string> getKeys() const; 
 
     template<typename T>
-    T getValue(const std::string& key) const;
+    inline T getValue(const std::string& key) const;
 
     template <typename T>
-    void setValue(const std::string& key, const T& value);
+    inline void setValue(const std::string& key, const T& value);
 
 };
 
-ConfigParser::ConfigParser(){}
-
-ConfigParser::~ConfigParser(){}
-
-std::string ConfigParser::trim(const std::string& str) 
+inline std::string ConfigParser::trim(const std::string& str) 
 {
     size_t start = str.find_first_not_of(" \t");
     size_t end = str.find_last_not_of(" \t");
     return (start == std::string::npos) ? "" : str.substr(start, end - start + 1);
 }
 
-bool ConfigParser::isKeyValid(const std::string& key) const {
+inline bool ConfigParser::isKeyValid(const std::string& key) const {
 
     // Key should not be empty
     if (key.empty()) return false;
@@ -87,7 +83,7 @@ bool ConfigParser::isKeyValid(const std::string& key) const {
 
 // TODO:    support more value_types if neccesary and update saveToFile
 // TODO:    multiple '-' might be problem ? stoi/stof cuts string after non numerical tho
-ConfigParser::ConfigValue ConfigParser::parseValue(const std::string& value) 
+inline ConfigParser::ConfigValue ConfigParser::parseValue(const std::string& value) 
 {
         if (value.front() == '"' && value.back() == '"') {
             return value.substr(1, value.size() - 2);   // String 
@@ -122,7 +118,7 @@ ConfigParser::ConfigValue ConfigParser::parseValue(const std::string& value)
         throw std::invalid_argument("configParserError: Unknown value type: " + value);
     }
 
-void ConfigParser::loadFromFile(const std::string& filename) 
+inline void ConfigParser::loadFromFile(const std::string& filename) 
 {
     std::ifstream file(filename);
 
@@ -170,7 +166,7 @@ void ConfigParser::loadFromFile(const std::string& filename)
 }
 
 // TODO: Maybe add support for comments ?
-void ConfigParser::saveToFile(const std::string& filename) const 
+inline void ConfigParser::saveToFile(const std::string& filename) const 
 {
     std::ofstream file(filename);
 
@@ -188,6 +184,9 @@ void ConfigParser::saveToFile(const std::string& filename) const
         } else if (std::holds_alternative<int>(value)) {
             file << std::get<int>(value);                        // Output integer as-is
 
+        } else if (std::holds_alternative<unsigned int>(value)) {
+            file << std::get<unsigned int>(value);              // Output unsigned integer as-is
+
         } else if (std::holds_alternative<float>(value)) {
             file << std::get<float>(value);                      // Output float as-is
 
@@ -202,12 +201,12 @@ void ConfigParser::saveToFile(const std::string& filename) const
     file.close();
 }
 
-void ConfigParser::clear()
+inline void ConfigParser::clear()
 {
     configMap.clear(); 
 }
 
-void ConfigParser::clearKeys(const std::vector<std::string>& keys) 
+inline void ConfigParser::clearKeys(const std::vector<std::string>& keys) 
 {
     for (const auto& key : keys) 
     {
@@ -215,8 +214,17 @@ void ConfigParser::clearKeys(const std::vector<std::string>& keys)
     }
 }
 
+inline std::vector<std::string> ConfigParser::getKeys() const 
+{
+    std::vector<std::string> keys;
+    for (const auto& [key, _] : configMap) {
+        keys.push_back(key);
+    }
+    return keys;
+}
+
 template<typename T>
-T ConfigParser::getValue(const std::string& key) const 
+inline T ConfigParser::getValue(const std::string& key) const 
 {
     auto it = configMap.find(key);
     if (it == configMap.end()) 
@@ -228,7 +236,7 @@ T ConfigParser::getValue(const std::string& key) const
 }
 
 template <typename T>
-void ConfigParser::setValue(const std::string& key, const T& value) {
+inline void ConfigParser::setValue(const std::string& key, const T& value) {
         if (!isKeyValid(key)) {
             throw std::runtime_error("Invalid key name: '" + key + "'");
 

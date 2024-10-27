@@ -27,6 +27,10 @@ int main()
         int i_3 = parser.getValue<int>("i_3");
         int i_4 = parser.getValue<int>("i_4");
 
+        // we expect int to be >= 0 and it works
+        unsigned int u_1 = parser.getValue<int>("i_1") + parser.getValue<int>("i_1");
+        std::cout << "u_1:" << u_1 << "\n";
+
         std::cout <<  "i_1:" << i_1 << "\n";
         std::cout <<  "i_2:" << i_2 << "\n";
         std::cout <<  "i_3:" << i_3 << "\n";
@@ -64,10 +68,12 @@ int main()
         parser.setValue("version", 14.2f);
         parser.setValue("resolution_width", 1920);
         parser.setValue("resolution_height", 1080);
-        parser.setValue("version", 14.2f);
         parser.setValue("fullscreen", true);
         parser.setValue("verticalSync", false);
         parser.setValue("contextSettings_antialiasingLevel", 16);
+
+        unsigned int u_1 = 420;
+        parser.setValue("u_1",u_1);
 
         // Getting values back (with type-safety)
         std::cout << parser.getValue<std::string>("title") << "\n";
@@ -77,7 +83,7 @@ int main()
         std::cout << parser.getValue<bool>("fullscreen") << "\n";
         std::cout << parser.getValue<bool>("verticalSync") << "\n";
         std::cout << parser.getValue<int>("contextSettings_antialiasingLevel") << "\n";
-
+        std::cout << parser.getValue<unsigned int>("u_1") << "\n";
         parser.clearKeys({"contextSettings_antialiasingLevel","version"});
 
         parser.saveToFile("Test2.config");
