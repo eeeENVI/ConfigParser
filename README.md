@@ -1,2 +1,2 @@
 # ConfigParser
-Simple modern c++17 ini-like config parser written in c++
+Simple single header modern ini-like config parser written in c++17.
