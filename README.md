@@ -40,7 +40,7 @@ int main()
   std::cout << parser.getValue<int>("resolution_height") << "\n";
   std::cout << parser.getValue<int>("frameRateLimit") << "\n";
   std::cout << parser.getValue<bool>("fullscreen") << "\n";
-  std::cout <<= parser.getValue<bool>("verticalSync") << "\n";
+  std::cout << parser.getValue<bool>("verticalSync") << "\n";
 
   std::cout <<= parser.getValue<bool>("non_existent_key") << "\n"; // <-- this one will catch error
 
